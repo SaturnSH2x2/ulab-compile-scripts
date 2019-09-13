@@ -1,0 +1,44 @@
+#!/usr/bin/expect -f
+
+set tutor [lindex $argv 0]
+set executable [lindex $argv 1]
+set sshvmextra [lindex $argv 2]
+set username [lindex $argv 3]
+set gdb [lindex $argv 4]
+
+if { $sshvmextra == 1 } {
+	spawn ssh $username@$tutor
+	expect "> "
+	
+	# note: tutor-login should be an alias for 
+	# logging into the VM on the host
+	send "tutor-login\r"
+} else {
+	spawn ssh tuser@$tutor
+}
+
+expect "tuser@$tutor's password: "
+send "cs444\r"
+expect "$ "
+send "cd executables\r"
+expect "$ "
+
+if { $gdb == 1 } {
+	send "gdb $executable\r"
+	expect "(gdb) "
+	send "tar rem /dev/ttyS0"
+	expect "(gdb) "
+	interact
+} else {
+	send "mtip -f $executable\r"
+	expect "Using board # 1"
+	send "\r"
+	expect "> "
+	send "~d"
+	expect "> "
+	send "gdb\r"
+	#expect "$ "
+	#send "~q"
+	#expect "$ "
+	#send "exit"
+} 

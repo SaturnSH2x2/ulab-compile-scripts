@@ -1,0 +1,20 @@
+#!/usr/bin/expect -f
+
+set dir [lindex $argv 0]
+set doClean [lindex $argv 1]
+set username [lindex $argv 2]
+set remote [lindex $argv 3]
+
+spawn ssh $username@$remote
+expect "> "
+#send "if [[ ! -d .temp-mp ]]; then mkdir .temp-mp; fi\r"
+#expect "> "
+send "ssh ulab\r"
+expect "% "
+send "cd .temp-mp/$dir\r"
+send "make $doClean\r"
+expect "% "
+send "logout\r"
+expect "> "
+send "exit\r"
+
