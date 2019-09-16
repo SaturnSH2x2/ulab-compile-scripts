@@ -68,8 +68,8 @@ fi
 
 # this script expects the VMs to be already running. They can
 # either be hosted locally or remotely
-tutor-send $VMREMOTE $(basename $DIR/*.lnx) $SSHVM $VMUSERNAME &
+tutor-send $VMREMOTE $(basename $DIR/*.lnx) $SSHVM $VMUSERNAME
 #sleep 5
 
 # set up GDB session
-
+#read

@@ -9,6 +9,8 @@ spawn ssh $username@$remote
 expect "> "
 #send "if [[ ! -d .temp-mp ]]; then mkdir .temp-mp; fi\r"
 #expect "> "
+send "mkdir .temp-mp\r"
+expect "> "
 send "ssh ulab\r"
 expect "% "
 send "cd .temp-mp/$dir\r"

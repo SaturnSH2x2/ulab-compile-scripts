@@ -4,7 +4,6 @@ set tutor [lindex $argv 0]
 set executable [lindex $argv 1]
 set sshvmextra [lindex $argv 2]
 set username [lindex $argv 3]
-set gdb [lindex $argv 4]
 
 if { $sshvmextra == 1 } {
 	spawn ssh $username@$tutor
@@ -17,28 +16,15 @@ if { $sshvmextra == 1 } {
 	spawn ssh tuser@$tutor
 }
 
-expect "tuser@$tutor's password: "
-send "cs444\r"
+# tutor expects passwordless key-based authentication
 expect "$ "
 send "cd executables\r"
 expect "$ "
 
-if { $gdb == 1 } {
-	send "gdb $executable\r"
-	expect "(gdb) "
-	send "tar rem /dev/ttyS0"
-	expect "(gdb) "
-	interact
-} else {
-	send "mtip -f $executable\r"
-	expect "Using board # 1"
-	send "\r"
-	expect "> "
-	send "~d"
-	expect "> "
-	send "gdb\r"
-	#expect "$ "
-	#send "~q"
-	#expect "$ "
-	#send "exit"
-} 
+send "mtip -f $executable\r"
+expect "Using board # 1"
+send "\r"
+expect "> "
+send "~d"
+expect "> "
+interact
