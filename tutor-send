@@ -21,7 +21,7 @@ expect "$ "
 send "cd executables\r"
 expect "$ "
 
-send "mtip -f $executable\r"
+send "mtip -f $executable && exit\r"
 expect "Using board # 1"
 send "\r"
 expect "> "

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # bash script for automating compiling binaries on the ulab servers.
 # This script assumes you have passwordless key-based authentication set up.
@@ -14,17 +14,17 @@ while getopts ":c:d:p:r:s:u:v:y" arg; do
 			;;
 		c) CLEAN="clean"		# are we doing make clean?
 			;;
-		u) USERNAME=$OPTARG		# remote username for server
+		u) USERNAME=$OPTARG		# remote username for server (required)
 			;;
-		r) REMOTE=$OPTARG		# server name / IP
+		r) REMOTE=$OPTARG		# server name / IP (required)
 			;;
 		p) PORT=$OPTARG			# SSH port (22 by default)
 			;;
 		s) SSHVM=1			# will we need to SSH into the VM on a remote server?
 			;;
-		v) VMREMOTE=$OPTARG
+		v) VMREMOTE=$OPTARG		# VM to SSH into (required)
 			;;
-		y) VMUSERNAME=$OPTARG
+		y) VMUSERNAME=$OPTARG		# username for VM (uses normal username by default)
 			;;
 	esac
 done
@@ -41,7 +41,6 @@ fi
 
 BASEDIR=$(basename $DIR)
 
-# we don't need to compile the files remotely for cleaning
 if [[ -n $CLEAN ]]; then
 	cd $DIR && make clean
 	#exit 0
@@ -67,9 +66,6 @@ if [[ $SSHVM -eq 0 ]]; then
 fi
 
 # this script expects the VMs to be already running. They can
-# either be hosted locally or remotely
+# either be hosted locally or remotely.
+# the user will be able to interact with the virtual SAPC after this.
 tutor-send $VMREMOTE $(basename $DIR/*.lnx) $SSHVM $VMUSERNAME
-#sleep 5
-
-# set up GDB session
-#read

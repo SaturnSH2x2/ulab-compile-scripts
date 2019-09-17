@@ -12,6 +12,7 @@ expect "> "
 send "mkdir .temp-mp\r"
 expect "> "
 send "ssh ulab\r"
+set timeout 30
 expect "% "
 send "cd .temp-mp/$dir\r"
 send "make $doClean\r"
