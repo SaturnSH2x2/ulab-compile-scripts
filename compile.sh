@@ -6,12 +6,16 @@
 # port by default, this can be changed
 PORT=22
 SSHVM=0
+MAKEARGS=""
 
 		
-while getopts ":c:d:p:r:s:u:v:y" arg; do
+while getopts ":a:c:d:p:r:s:u:v:y" arg; do
 	case $arg in
+		a) MAKEARGS=$OPTARG		# arguments to pass to make (if necessary)
+			;;
 		d) DIR=$OPTARG			# location of directory to compile
 			;;
+		# TODO: deprecated by a argument, remove eventually
 		c) CLEAN="clean"		# are we doing make clean?
 			;;
 		u) USERNAME=$OPTARG		# remote username for server (required)
@@ -52,7 +56,13 @@ scp -r $DIR $USERNAME@$REMOTE:.temp-mp/
 
 # this script assumes that ulab-compile is in the path
 # and is marked as executable
-ulab-compile $BASEDIR "$CLEAN" $USERNAME $REMOTE
+ulab-compile $BASEDIR "$CLEAN" $USERNAME $REMOTE $MAKEARGS
+
+# for cases where we don't want to send files to the VM; we just want to
+# test whether or not everything compiles correctly
+if [[ $VMREMOTE -eq 0 ]]; then
+	exit 0
+fi
 
 # copy lnx files and syms back here
 # TODO: also replace this with rsync

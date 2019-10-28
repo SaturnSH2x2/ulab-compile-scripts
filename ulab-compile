@@ -4,6 +4,7 @@ set dir [lindex $argv 0]
 set doClean [lindex $argv 1]
 set username [lindex $argv 2]
 set remote [lindex $argv 3]
+set makeargs [lindex $argv 4]
 
 spawn ssh $username@$remote
 expect "> "
@@ -15,7 +16,7 @@ send "ssh ulab\r"
 set timeout 30
 expect "% "
 send "cd .temp-mp/$dir\r"
-send "make $doClean\r"
+send "make $makeargs $doClean\r"
 expect "% "
 send "logout\r"
 expect "> "
