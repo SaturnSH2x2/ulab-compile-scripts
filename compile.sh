@@ -7,9 +7,10 @@
 PORT=22
 SSHVM=0
 MAKEARGS=""
+LNX=""
 
 		
-while getopts ":a:c:d:p:r:s:u:v:y" arg; do
+while getopts ":a:c:d:e:p:r:s:u:v:y" arg; do
 	case $arg in
 		a) MAKEARGS=$OPTARG		# arguments to pass to make (if necessary)
 			;;
@@ -17,6 +18,8 @@ while getopts ":a:c:d:p:r:s:u:v:y" arg; do
 			;;
 		# TODO: deprecated by a argument, remove eventually
 		c) CLEAN="clean"		# are we doing make clean?
+			;;
+		e) LNX=$OPTARG			# specify the executable to pass to the VM
 			;;
 		u) USERNAME=$OPTARG		# remote username for server (required)
 			;;
@@ -60,7 +63,7 @@ ulab-compile $BASEDIR "$CLEAN" $USERNAME $REMOTE $MAKEARGS
 
 # for cases where we don't want to send files to the VM; we just want to
 # test whether or not everything compiles correctly
-if [[ $VMREMOTE -eq 0 ]]; then
+if [[ -z $VMREMOTE ]]; then
 	exit 0
 fi
 
@@ -68,6 +71,11 @@ fi
 # TODO: also replace this with rsync
 scp $USERNAME@$REMOTE:.temp-mp/$BASEDIR/*.lnx $DIR
 scp $USERNAME@$REMOTE:.temp-mp/$BASEDIR/syms $DIR
+
+# TODO: you may want to fix this eventually
+if [[ -z $LNX ]]; then
+	LNX=$(basename $DIR/*.lnx)
+fi
 
 # send lnx file to VM
 # TODO: handle cases where the VM is running on a remote server
@@ -78,4 +86,4 @@ fi
 # this script expects the VMs to be already running. They can
 # either be hosted locally or remotely.
 # the user will be able to interact with the virtual SAPC after this.
-tutor-send $VMREMOTE $(basename $DIR/*.lnx) $SSHVM $VMUSERNAME
+tutor-send $VMREMOTE $LNX $SSHVM $VMUSERNAME
